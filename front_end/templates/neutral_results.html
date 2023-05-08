@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Real-time Sentiment Analysis</title>
+</head>
+<body>
+    <div class="card_tweets">
+        <section class="tweets">
+            <h2>Tweets</h2>
+            <div class="tweetMsg">
+                    <div id="log"></div><br>
+            </div>
+
+        </section>
+    </div> 
+    <div class="charts">
+        <div class="pieChart"><canvas id="pieChart" class="pieChart"></canvas></div>
+        <div class="myChart"><canvas id="myChart"></canvas></div>
+    </div>
+
+    <script type="text/javascript" charset="utf-8">
+        const ctx = document.getElementById('myChart');
+        const piectx = document.getElementById('pieChart');
+        let positiveTweets = 0;
+        let NegativeTweets = 0;
+        let NeutralTweets = 0;
+        let totalTweets = 0;
+
+        const barChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+            labels: ["Positive", "Negative", "Neutral"],
+            datasets: [{
+                label: '# of Positive and negative sentiments',
+                data: [0,0,0],
+                backgroundColor: [
+                    'rgba(91, 240, 65, 0.6)',
+                    'rgba(245, 7, 7, 0.6)',
+                    'rgba(245, 193, 7, 0.6)'
+                ],
+                borderColor: [
+                    'rgb(53, 245, 20)',
+                    'rgb(245, 7, 7)',
+                    'rgb(245, 193, 7)'
+                ],
+                borderWidth: 1,
+                borderRadius: 10
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+
+        const pieChart = new Chart(piectx, {
+            type: 'doughnut',
+            data: {
+            labels: ["Positive", "Negative", "Neutral"],
+            datasets: [{
+                label: '% of Positive and Negative sentiments',
+                data: [0,0,0],
+                backgroundColor: [
+                    'rgba(91, 240, 65, 0.6)',
+                    'rgba(245, 7, 7, 0.6)',
+                    'rgba(245, 193, 7, 0.6)'
+                ],
+                hoverOffset: 4
+            }]
+            }
+        });
+
+        $(document).ready(function() {
+            var socket = io.connect()
+            console.log(socket)
+
+            socket.on('sending_message', function(msg) {
+                if(msg["pred"] == "LABEL_2"){
+                    $('#log').append('<p style="color:green;">' +msg["text"] + '</p>');
+                }else if(msg["pred"] == "LABEL_1"){
+                    $('#log').append('<p style="color:red;">' +msg["text"] + '</p>');
+                }else {
+                    $('#log').append('<p style="color:rgb(245, 193, 7);">' +msg["text"] + '</p>');
+                }
+            });
+
+            socket.on('sending_prediction', function(msg) {
+                // $('#pred').append('<p>Prediction: ' + msg + '</p>');
+                if(msg == "LABEL_2"){
+                    positiveTweets = positiveTweets + 1;
+                }else if(msg == "LABEL_1"){
+                    NegativeTweets = NegativeTweets + 1;
+                }else{
+                    NeutralTweets = NeutralTweets + 1;
+                }
+                totalTweets = totalTweets + 1;
+
+                barChart.data.datasets[0].data = [positiveTweets, NegativeTweets, NeutralTweets]
+                pieChart.data.datasets[0].data = [(positiveTweets / totalTweets) * 100 , (NegativeTweets / totalTweets) * 100, (NeutralTweets / totalTweets) * 100]
+                console.log(barChart.data.datasets.data)
+                barChart.update()
+                pieChart.update()
+            });
+
+        });
+    </script>
+</body>
+</html>

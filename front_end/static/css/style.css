@@ -1,0 +1,156 @@
+.card {
+    width: 600px;
+    margin: auto;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(12, 12, 32);
+    padding: 2rem;
+    color: white;
+    border-radius: 20px;
+    position: relative;
+}
+
+.card_tweets {
+    width: 600px;
+    margin: 50px auto;
+    height: 600px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: white;
+    padding: 2rem;
+    color: rgb(12, 12, 43);
+    border-radius: 20px;
+    position: relative;
+    border: 1px solid lightgray;
+    float: left;
+    white-space: nowrap;
+    overflow-x: scroll;
+    overflow-y: scroll;
+}
+
+.charts{
+    width: 600px;
+    height: 600px;
+    padding: 2rem;
+    float: left;
+}
+
+.myChart{
+    width: 500px;
+    height: 600px;
+    padding: 2rem;
+    position: relative;
+}
+
+.pieChart{
+    width: 500px;
+    height: 500px;
+    padding: 2rem;
+}
+
+.tweetMsg {
+    padding: 1rem;
+    border-bottom: 1px solid lightgrey;
+    /* word-break: break-all; */
+    display: flex;
+    flex-direction: column;
+}
+
+.tweetDate {
+    color: #9191ad;
+    font-size: 0.75rem;
+}
+.tweet_remove {
+    align-self: flex-end;
+    cursor: pointer;
+}
+.tweet_remove:hover {
+    color: red;
+}
+
+.form_group {
+    border: 1px solid grey;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.form_group label {
+    color: grey;
+    display: flex;
+    justify-content: space-between;
+}
+
+.form_group input,
+.form_group textarea {
+    height: 1.5rem;
+    border-style: none;
+    background-color: transparent;
+    color: white;
+    text-transform: uppercase;
+
+}
+
+.form_group input:focus,
+.form_group textarea:focus {
+    border-style: none;
+    outline: none;
+}
+
+button {
+    border-radius: 15px;
+    padding: 5px 30px;
+    background-color: #1da7f2;
+    border: none;
+    color: white;
+    position: absolute;
+    right: 20px;
+}
+
+.errorMessage {
+    color: red
+}
+
+#loader-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #242f3f;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  display: none;
+}
+.loader {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  border: 4px solid white;
+  animation: loader 2s infinite ease;
+}
+.loader-inner {
+  vertical-align: top;
+  display: inline-block;
+  width: 100%;
+  background-color: white;
+  animation: loader-inner 2s infinite ease-in;
+}
+
+@keyframes loader {
+  0% { transform: rotate(0deg);}
+  25% { transform: rotate(180deg);}
+  50% { transform: rotate(180deg);}
+  75% { transform: rotate(360deg);}
+  100% { transform: rotate(360deg);}
+}
+
+@keyframes loader-inner {
+  0% { height: 0%;}
+  25% { height: 0%;}
+  50% { height: 100%;}
+  75% { height: 100%;}
+  100% { height: 0%;}
+}
