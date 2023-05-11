@@ -11,6 +11,8 @@ class TwitterAPI:
     def functionality(self, task):
         if task == "get_tweets":
             return GetTweets()
+        elif task == "prediction_helper":
+            return Prediction()
         else:
             raise NotImplementedError
 
@@ -45,7 +47,7 @@ class GetTweets():
 class Prediction:
     def get_sentiment(self, tweet, model, bert_model): 
         text_prediction = {}
-        prediction_and_score = model.predict(bert_model, tweet)
+        prediction_and_score = model.predict(tweet, bert_model)
         prediction = prediction_and_score[0]
         if(prediction == "LABEL_2"):
             text_prediction["label"] = "positive"
@@ -58,9 +60,9 @@ class Prediction:
     def get_predictions(self, tweets, model, bert_model):
         predictions = {}
         predictions["text_predictions"] = []
-        # for tweet in tweets:
-        text_prediction = self.get_sentiment(tweets["text"], model, bert_model)
-        predictions["text_predictions"].append({"text": tweets["text"], "prediction":text_prediction[0], "score": text_prediction[1]})
+        for tweet in tweets:
+            text_prediction = self.get_sentiment(tweet["text"],  model, bert_model)
+            predictions["text_predictions"].append({"text": tweet["text"], "prediction":text_prediction[0], "score": text_prediction[1]})
 
         return predictions
 
@@ -69,12 +71,13 @@ if __name__ == "__main__":
     twitter_api = TwitterAPI()
     get_tweets = twitter_api.functionality("get_tweets")
     tweets = get_tweets.get_twitter_tweets("biden")
+    # tweets = ["One of them and testing it"]
 
     models = MLModel()
     model = models.select_model("BertSent")
     bert_model = model.get_model()
 
-    predictions_helper = Prediction()
+    predictions_helper = twitter_api.functionality("prediction_helper")
     predictions = predictions_helper.get_predictions(tweets, model, bert_model)
 
     pp = pprint.PrettyPrinter(indent=2)

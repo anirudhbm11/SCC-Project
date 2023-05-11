@@ -18,7 +18,7 @@ from transformers import BertForSequenceClassification, TFAutoModelForSequenceCl
 
 class MLmodelTasks(ABC):
     @abstractmethod
-    def predict(self, model, data):
+    def predict(self, data):
         pass
 
     def clean_data(self, text, stem=False):
@@ -35,14 +35,13 @@ class MLmodelTasks(ABC):
         
         # Remove stopwords
         lemmatizer = WordNetLemmatizer()
-    #     text_tokens = word_tokenize(text)
         text_tokens = text.split()
         filtered_sentence = " ".join([lemmatizer.lemmatize(w) for w in text_tokens if not w.lower() in stopwords.words('english') and len(w) > 1])
         
         return filtered_sentence
 
 class LogisticRegression(MLmodelTasks):
-    def predict(self, model, text):
+    def predict(self, text):
         # model = self.getModel()
         text = self.clean_data(text)
         vectorizer = load("training/tfidf_vectorizer.joblib")
@@ -55,7 +54,7 @@ class LogisticRegression(MLmodelTasks):
         return model
 
 class BertModel(MLmodelTasks):
-    def predict(self,model, text):
+    def predict(self,text):
         # model = self.get_model()
         text = self.clean_data(text)
         tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
@@ -72,7 +71,7 @@ class BertModel(MLmodelTasks):
         return model
 
 class BertSent(MLmodelTasks):
-    def predict(self, model, text):
+    def predict(self, text, model):
         # model = self.get_model()
         text = self.clean_data(text)
         tokenizer = AutoTokenizer.from_pretrained("rabindralamsal/finetuned-bertweet-sentiment-analysis")
@@ -101,6 +100,6 @@ class MLModel:
 if __name__ == "__main__":
     models = MLModel()
     model = models.select_model("BertSent")
-    final_model = model.get_model()
-    print(model.predict(final_model, ["This is bad. Really bad"]))
+    bert_model = model.get_model()
+    print(model.predict(["This is bad. Really bad"], bert_model))
         

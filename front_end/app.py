@@ -1,79 +1,68 @@
 from flask import Flask, render_template, request, redirect, url_for
 import socket
-from flask_socketio import SocketIO
-from threading import Lock
 from get_tweets import TwitterAPI
 import json
 import pickle
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app,cors_allowed_origins='*')
 
-predictions = []
-
-thread = None
-thread_lock = Lock()
+final_topic1_predictions = []
+final_topic2_predictions = []
 
 @app.route('/',methods = ['POST', 'GET'])
 def index_page():
     host = "127.0.0.1"
     port = 8004
     if request.method == 'POST':
-        topic = request.form.get("topic")
+        topic1 = request.form.get("topic1")
+        topic2 = request.form.get("topic2")
 
         twitter_api = TwitterAPI()
         get_tweets = twitter_api.functionality("get_tweets")
-        tweets = get_tweets.get_twitter_tweets(topic)
+        topic1_tweets = get_tweets.get_twitter_tweets(topic1)
+        topic2_tweets = get_tweets.get_twitter_tweets(topic2)
+        # tweets = json.dumps(tweets)
 
-        for tweet in tweets:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect((host, port))
-                tweet = json.dumps(tweet).encode('utf-8')
-                s.send(tweet)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((host, port))
+            dumped_topic1_tweets = pickle.dumps(topic1_tweets)
 
-                # print(s.recv(1024).decode())
+            # print({"tweets":tweets})
+            # final_tweets = {"tweets":tweets}
+            # final_tweets = json.dumps(final_tweets).replace('\r', '')
+            # encoded_tweets = final_tweets.encode('utf-8')
+            print("Topic 1......")
+            s.send(dumped_topic1_tweets)
+            # print(s.recv(1024).decode())
+            topic1_predictions = s.recv(10024)
+            final_topic1_predictions = pickle.loads(topic1_predictions)
+            print(final_topic1_predictions)
 
-                prediction = s.recv(1024)
-                predictions.append(pickle.loads(prediction))
+            s.close()
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            print("TOPIC 2:.....")    
+            s.connect((host, port))
+            dumped_topic2_tweets = pickle.dumps(topic2_tweets)
+            s.send(dumped_topic2_tweets)
+            # print(s.recv(1024).decode())
+            topic2_predictions = s.recv(10024)
+            final_topic2_predictions = pickle.loads(topic2_predictions)
+            # predictions.append(pickle.loads(prediction))
+            print(final_topic2_predictions)
+            s.close()
 
         return redirect(url_for('result'))
 
     return render_template("index.html")
 
-# def background_thread():
-#     print("Generating random sensor values")
-#     while True:
-#         dummy_sensor_value = round(random() * 100, 3)
-#         socketio.emit('sending_message', {'value': dummy_sensor_value, "date": "today"})
-#         # socketio.sleep(1)
-
-@socketio.on('connect')
-def connect():
-    print('Client connected')
-
-    global thread
-    with thread_lock:
-        if thread is None:
-            thread = socketio.start_background_task(sending_message)
-
-@socketio.on('disconnect')
-def disconnect():
-    print('Client disconnected')
-
-def sending_message():
-    for prediction in predictions:
-        predictions_final = prediction["text_predictions"][0]
-        text_prediction = {"text":predictions_final["text"], "pred":predictions_final["score"][0]}
-        socketio.emit('sending_message',text_prediction)
-        socketio.emit('sending_prediction', str(prediction))
-        socketio.sleep(1)
-
 @app.route('/result')
 def result():
-    return render_template("result.html")
-    # return render_template("neutral_results.html")
+    # return render_template("result.html")
+    return render_template("neutral_results.html")
 
 
 if __name__ == "__main__":
-    socketio.run(app, port=5003)
+    # socketio.run(app, port=5003)
+    app.run(port=5003, debug=True)
