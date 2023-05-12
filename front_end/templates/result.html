@@ -41,7 +41,6 @@
             const ctx = document.getElementById('myChart');
             const piectx = document.getElementById('pieChart');
             const radarcxt = document.getElementById('radarChart');
-            const scatterctx = document.getElementById('scatterChart');
 
             let positiveTweets = 0;
             let NegativeTweets = 0;
@@ -96,10 +95,10 @@
             const radarChart = new Chart(radarcxt, {
             type: 'radar',
             data: {
-                labels: ['Positive', 'Negative', 'Neutral', 'Intensity', 'Subjectivity'],
+                labels: ['Positive', 'Negative', 'Neutral'],
                 datasets: [{
                     label: 'Sentiment Analysis Metrics',
-                    data: [0, 0, 0, 0, 0],
+                    data: [0, 0, 0],
                     backgroundColor: 'rgba(91, 240, 65, 0.2)',
                     borderColor: 'rgb(53, 245, 20)',
                     borderWidth: 1
@@ -115,30 +114,7 @@
             }
         });
 
-            const scatterChart = new Chart(scatterctx, {
-        type: 'scatter',
-        data: {
-            datasets: [{
-                label: 'Scatter Chart',
-                data: [],
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'linear',
-                    position: 'bottom'
-                },
-                y: {
-                    type: 'linear',
-                    position: 'left'
-                }
-            }
-        }
-    });
+
 
     // --------------------------suyash code-----------------------
     const tweets = [
@@ -356,13 +332,11 @@ function draw(words) {
 
                     barChart.data.datasets[0].data = [positiveTweets, NegativeTweets]
                     pieChart.data.datasets[0].data = [(positiveTweets / totalTweets) * 100 , (NegativeTweets / totalTweets) * 100]
-                    radarChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
-                    scatterChart.data.datasets[0].data.push({ x: xValue, y: yValue });
+                    radarChart.data.datasets[0].data = [positiveTweets, NegativeTweets, NeutralTweets];
                    
                     console.log(barChart.data.datasets.data)
 
                     radarChart.update();
-                    scatterChart.update();
                     barChart.update()
                     pieChart.update()
                  
