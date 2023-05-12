@@ -8,12 +8,16 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/d3-cloud@1.2.5/build/d3.layout.cloud.js"></script>
         <title>Real-time Sentiment Analysis</title>
     </head>
     <body>
         <div class="card_tweets">
             <section class="tweets">
-                <h2>Tweets</h2>
+                <h2>Tweets 1</h2>
                 <div class="tweetMsg">
                         <div id="log"></div><br>
                 </div>
@@ -25,6 +29,12 @@
             <div class="myChart"><canvas id="myChart"></canvas></div>
             <div class="radarChart"><canvas id="radarChart"></canvas></div>
             <div class="scatterChart"><canvas id="scatterChart"></canvas></div>
+            <h2>Suyash's chart 1</h2>
+            <div id="chart"></div>
+            <h2>Suyash's chart 2</h2>
+            <div id="chart2"></div>
+            <h2>Suyash's chart 3</h2>
+            <div id="wordcloud"></div>
         </div>
 
         <script type="text/javascript" charset="utf-8">
@@ -130,6 +140,193 @@
         }
     });
 
+    // --------------------------suyash code-----------------------
+    const tweets = [
+      "I love my new phone! #newphone #happy",
+      "Had a great time at the beach today! #beach #fun #sunshine",
+      "Stuck in traffic again! #traffic #frustrated",
+      "My phone just died and I lost all my data! #angry #phoneproblems",
+      "Just got a promotion at work! #excited #career #success",
+      "My boss yelled at me today for no reason. #unfair #upset #workproblems #newphone"
+    ];
+
+    // Function to extract hashtags from tweets
+    function extractHashtags(tweet) {
+      const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+      const hashtags = [];
+      let match;
+      while ((match = regex.exec(tweet)) !== null) {
+        hashtags.push(match[1]);
+      }
+      return hashtags;
+    }
+
+    // Extract hashtags from all tweets
+    const allHashtags = tweets.flatMap(extractHashtags);
+
+    // Function to count hashtag occurrences
+    function countHashtags(hashtags) {
+      const counts = {};
+      hashtags.forEach(hashtag => {
+        counts[hashtag] = counts[hashtag] ? counts[hashtag] + 1 : 1;
+      });
+      return counts;
+    }
+
+    // Count hashtag occurrences for all tweets
+    const hashtagCounts = countHashtags(allHashtags);
+
+    // Function to sort hashtag counts by frequency
+    function sortHashtags(counts) {
+      return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    }
+
+    // Sort hashtag counts by frequency
+    const sortedHashtagCounts = sortHashtags(hashtagCounts);
+
+    // Function to create data for Plotly chart
+    function createChartData(counts) {
+      const xValues = counts.map(item => item[0]);
+      const yValues = counts.map(item => item[1]);
+      const data = [
+        {
+          x: xValues,
+          y: yValues,
+          type: 'bar'
+        }
+      ];
+      return data;
+    }
+
+    // Create data for Plotly chart
+    const chartData = createChartData(sortedHashtagCounts);
+
+    // Define layout for Plotly chart
+    const chartLayout = {
+      title: 'Tweets Hashtags Chart',
+      xaxis: {
+        title: 'Hashtag',
+        tickangle: -45
+      },
+      yaxis: {
+        title: 'Occurrences'
+      }
+    };
+
+    // Create Plotly chart
+    Plotly.newPlot('chart', chartData, chartLayout);
+
+// -------------------------------------------chart 2----------------------------
+const positiveTweets1 = [
+  "I love my new phone! #newphone #happy",
+  "Had a great time at the beach today! #beach #fun #sunshine",
+  "Just got a promotion at work! #excited #career #success"
+];
+const negativeTweets1 = [
+  "Stuck in traffic again! #traffic #frustrated",
+  "My phone just died and I lost all my data! #angry #phoneproblems",
+  "My boss yelled at me today for no reason. #unfair #upset #workproblems"
+];
+
+// Function to extract words from tweets
+function extractWords(tweet) {
+  const regex = /[a-zA-Z]+/gm;
+  const words = [];
+  let match;
+  while ((match = regex.exec(tweet)) !== null) {
+    words.push(match[0].toLowerCase());
+  }
+  return words;
+}
+
+// Extract words from positive and negative tweets
+const positiveWords = positiveTweets1.flatMap(extractWords);
+const negativeWords = negativeTweets1.flatMap(extractWords);
+
+// Function to count word occurrences
+function countWords(words) {
+  const counts = {};
+  const stopWords = ["i", "my", "me", "we", "us", "you", "he", "she", "it", "they", "them"]; // custom stop words list
+  words.filter(word => !stopWords.includes(word)).forEach(word => {
+    counts[word] = counts[word] ? counts[word] + 1 : 1;
+  });
+  return counts;
+}
+
+// Count word occurrences for positive and negative tweets
+const positiveCounts = countWords(positiveWords);
+const negativeCounts = countWords(negativeWords);
+
+// Function to sort word counts by frequency
+function sortWords(counts) {
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+}
+
+// Sort positive and negative word counts by frequency
+const sortedPositiveCounts = sortWords(positiveCounts);
+const sortedNegativeCounts = sortWords(negativeCounts);
+
+// Function to display top N words
+function displayTopWords(counts, n) {
+  const topWords = counts.slice(0, n);
+  const data = [{
+    x: topWords.map(word => word[0]),
+    y: topWords.map(word => word[1]),
+    type: 'bar'
+  }];
+  Plotly.newPlot('chart2', data);
+}
+
+// Display top 5 positive and negative words
+displayTopWords(sortedPositiveCounts, 5);
+displayTopWords(sortedNegativeCounts, 5);
+// --------------------------------------------Chart 3--------------------------------------------------------
+var hashtags = [
+  "Python",
+  "JavaScript",
+  "React",
+  "Vue",
+  "Node.js",
+  "HTML",
+  "CSS",
+  "Java",
+  "PHP",
+  "Ruby"
+];
+
+var fontSize = d3.scalePow().exponent(5).domain([0,1]).range([10,80]);
+
+d3.layout.cloud().size([500, 500])
+  .words(hashtags.map(function(d) {
+    return {text: d, size: fontSize(Math.random())};
+  }))
+  .padding(5)
+  .rotate(function() { return ~~(Math.random() * 2) * 90; })
+  .font("Impact")
+  .fontSize(function(d) { return d.size; })
+  .on("end", draw)
+  .start();
+
+function draw(words) {
+  d3.select("#wordcloud").append("svg")
+    .attr("width", 500)
+    .attr("height", 500)
+    .append("g")
+    .attr("transform", "translate(250,250)")
+    .selectAll("text")
+    .data(words)
+    .enter().append("text")
+    .style("font-size", function(d) { return d.size + "px"; })
+    .style("font-family", "Impact")
+    .style("fill", function(d, i) { return d3.schemeCategory10[i % 10]; })
+    .attr("text-anchor", "middle")
+    .attr("transform", function(d) {
+      return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+    })
+    .text(function(d) { return d.text; });
+}
+
+// -----------------------------------------suyash-------------------------------------------------------
 
             $(document).ready(function() {
                 var socket = io.connect()
