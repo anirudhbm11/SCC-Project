@@ -29,6 +29,8 @@
             <div class="myChart"><canvas id="myChart"></canvas></div>
             <div class="radarChart"><canvas id="radarChart"></canvas></div>
             <div class="scatterChart"><canvas id="scatterChart"></canvas></div>
+            <div class="lineChart"><canvas id="lineChart"></canvas></div>
+            <div class="polarAreaChart"><canvas id="polarAreaChart"></canvas></div>
             <h2>Suyash's chart 1</h2>
             <div id="chart"></div>
             <h2>Suyash's chart 2</h2>
@@ -41,6 +43,8 @@
             const ctx = document.getElementById('myChart');
             const piectx = document.getElementById('pieChart');
             const radarcxt = document.getElementById('radarChart');
+            const linectx=document.getElementById('lineChart');
+            const polarAreactx=document.getElementById('polarAreaChart');
 
             let positiveTweets = 0;
             let NegativeTweets = 0;
@@ -113,6 +117,57 @@
                 }
             }
         });
+
+    //---------------------------------Kajal Code------------------------------
+
+        const lineChart = new Chart(linectx, {
+            type: 'line',
+            data: {
+                labels: ['Positive', 'Negative', 'Neutral', 'Intensity', 'Subjectivity'], // Array of labels for the x-axis
+                datasets: [{
+                label: 'Line Chart',
+                data: [], // Array of data points for the y-axis
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom'
+                },
+                y: {
+                    type: 'linear',
+                    position: 'left'
+                }
+                }
+            }
+            });
+
+                const polarAreaChart = new Chart(polarAreactx, {
+            type: 'polarArea',
+            data: {
+                labels: ['Positive', 'Negative', 'Neutral', 'Intensity', 'Subjectivity'],
+                datasets: [{
+                label: 'Polar Area Chart',
+                data: [10, 20, 30, 40, 50],
+                backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+                borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
+                borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                r: {
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                }
+                }
+            }
+            });
+
 
 
 
@@ -333,12 +388,16 @@ function draw(words) {
                     barChart.data.datasets[0].data = [positiveTweets, NegativeTweets]
                     pieChart.data.datasets[0].data = [(positiveTweets / totalTweets) * 100 , (NegativeTweets / totalTweets) * 100]
                     radarChart.data.datasets[0].data = [positiveTweets, NegativeTweets, NeutralTweets];
+                    lineChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
+                    polarAreaChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
                    
                     console.log(barChart.data.datasets.data)
 
                     radarChart.update();
                     barChart.update()
                     pieChart.update()
+                    lineChart.update()
+                    polarAreaChart.update();
                  
                 });
 
