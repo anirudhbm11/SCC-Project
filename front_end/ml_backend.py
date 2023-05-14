@@ -26,7 +26,7 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
             
             # data = b""
             # while True:
-            chunk = conn.recv(10024)
+            chunk = conn.recv(100024)
             #     if not chunk:
             #         break
             #     data += chunk

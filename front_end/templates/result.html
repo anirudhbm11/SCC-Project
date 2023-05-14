@@ -46,54 +46,60 @@
             const linectx=document.getElementById('lineChart');
             const polarAreactx=document.getElementById('polarAreaChart');
 
-            let positiveTweets = 0;
-            let NegativeTweets = 0;
-            let totalTweets = 0;
+            var result = {{ result | safe}};  
+            let positiveTweets = result.topic1.aggregate.positiveTweets;
+            let NegativeTweets = result.topic1.aggregate.negativeTweets;
+            let NeutralTweets = result.topic1.aggregate.neutralTweets;
+            let totalTweets = positiveTweets + NegativeTweets + NeutralTweets;
+            console.log(totalTweets)
               
         
             const barChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                labels: ["Positive", "Negative"],
-                datasets: [{
-                    label: '# of Positive and negative sentiments',
-                    data: [0,0],
-                    backgroundColor: [
-                        'rgba(91, 240, 65, 0.2)',
-                        'rgba(247, 79, 79, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgb(53, 245, 20)',
-                        'rgb(242, 17, 17)'
-                    ],
-                    borderWidth: 1,
-                    borderRadius: 10
-                }]
-                },
-                options: {
-                scales: {
-                    y: {
-                    beginAtZero: true
-                    }
+            type: 'bar',
+            data: {
+            labels: ["Positive", "Negative", "Neutral"],
+            datasets: [{
+                label: '# of Positive and negative sentiments',
+                data: [0,0,0],
+                backgroundColor: [
+                    'rgba(91, 240, 65, 0.6)',
+                    'rgba(245, 7, 7, 0.6)',
+                    'rgba(245, 193, 7, 0.6)'
+                ],
+                borderColor: [
+                    'rgb(53, 245, 20)',
+                    'rgb(245, 7, 7)',
+                    'rgb(245, 193, 7)'
+                ],
+                borderWidth: 1,
+                borderRadius: 10
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
                 }
-                }
-            });
+            }
+            }
+        });
 
-            const pieChart = new Chart(piectx, {
-                type: 'doughnut',
-                data: {
-                labels: ["Positive", "Negative"],
-                datasets: [{
-                    label: '% of Positive and Negative sentiments',
-                    data: [0,0],
-                    backgroundColor: [
-                        'rgba(91, 240, 65, 0.2)',
-                        'rgba(247, 79, 79, 0.2)'
-                    ],
-                    hoverOffset: 4
-                }]
-                }
-            });
+        const pieChart = new Chart(piectx, {
+            type: 'doughnut',
+            data: {
+            labels: ["Positive", "Negative", "Neutral"],
+            datasets: [{
+                label: '% of Positive and Negative sentiments',
+                data: [0,0,0],
+                backgroundColor: [
+                    'rgba(91, 240, 65, 0.6)',
+                    'rgba(245, 7, 7, 0.6)',
+                    'rgba(245, 193, 7, 0.6)'
+                ],
+                hoverOffset: 4
+            }]
+            }
+        });
             
             // Set up the radarChart options
             const radarChart = new Chart(radarcxt, {
@@ -312,24 +318,13 @@ function displayTopWords(counts, n) {
 displayTopWords(sortedPositiveCounts, 5);
 displayTopWords(sortedNegativeCounts, 5);
 // --------------------------------------------Chart 3--------------------------------------------------------
-var hashtags = [
-  "Python",
-  "JavaScript",
-  "React",
-  "Vue",
-  "Node.js",
-  "HTML",
-  "CSS",
-  "Java",
-  "PHP",
-  "Ruby"
-];
+var hashtags = result.topic1.aggregate.hashtags;
 
 var fontSize = d3.scalePow().exponent(5).domain([0,1]).range([10,80]);
 
 d3.layout.cloud().size([500, 500])
-  .words(hashtags.map(function(d) {
-    return {text: d, size: fontSize(Math.random())};
+  .words(Object.keys(hashtags).map(function(d) {
+    return {text: d, size: fontSize(hashtags[d])};
   }))
   .padding(5)
   .rotate(function() { return ~~(Math.random() * 2) * 90; })
@@ -359,49 +354,28 @@ function draw(words) {
 
 // -----------------------------------------suyash-------------------------------------------------------
 
-            $(document).ready(function() {
-                var socket = io.connect()
-                console.log(socket)
+        $(document).ready(function() {
 
-                socket.on('sending_message', function(msg) {
-                    if(msg["pred"] == "LABEL_0"){
-                        $('#log').append('<p style="color:green;">' +msg["text"] + '</p>');
-                    }else{
-                        $('#log').append('<p style="color:red;">' +msg["text"] + '</p>');
-                    }
-                });
+            //Test Data
+            const xValue = Math.random() * 100;
+            const yValue = Math.random() * 100;
 
-                socket.on('sending_prediction', function(msg) {
-                    // $('#pred').append('<p>Prediction: ' + msg + '</p>');
-                    if(msg == "LABEL_0"){
-                        positiveTweets = positiveTweets + 1;
-                    }else{
-                        NegativeTweets = NegativeTweets + 1;
-                    }
-                    totalTweets = totalTweets + 1;
-                    
-                    
-                    //Test Data
-                    const xValue = Math.random() * 100;
-                    const yValue = Math.random() * 100;
+            barChart.data.datasets[0].data = [positiveTweets, NegativeTweets, NeutralTweets]
+            pieChart.data.datasets[0].data = [(positiveTweets / totalTweets) * 100 , (NegativeTweets / totalTweets) * 100, (NeutralTweets / totalTweets) * 100]
+            radarChart.data.datasets[0].data = [positiveTweets, NegativeTweets, NeutralTweets];
+            lineChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
+            polarAreaChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
+            
+            console.log(barChart.data.datasets.data)
 
-                    barChart.data.datasets[0].data = [positiveTweets, NegativeTweets]
-                    pieChart.data.datasets[0].data = [(positiveTweets / totalTweets) * 100 , (NegativeTweets / totalTweets) * 100]
-                    radarChart.data.datasets[0].data = [positiveTweets, NegativeTweets, NeutralTweets];
-                    lineChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
-                    polarAreaChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
-                   
-                    console.log(barChart.data.datasets.data)
+            radarChart.update();
+            barChart.update()
+            pieChart.update()
+            lineChart.update()
+            polarAreaChart.update();
+          
+        });
 
-                    radarChart.update();
-                    barChart.update()
-                    pieChart.update()
-                    lineChart.update()
-                    polarAreaChart.update();
-                 
-                });
-
-            });
-        </script>
+    </script>
     </body>
     </html>

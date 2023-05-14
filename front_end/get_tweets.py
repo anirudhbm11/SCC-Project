@@ -23,7 +23,7 @@ class GetTweets():
         next_page = 0
         tweets = []
 
-        query_params = {'query':query + " lang:en -is:retweet",'tweet.fields':"created_at,lang"}
+        query_params = {'query':query + " lang:en -is:retweet",'tweet.fields':"created_at,lang,entities"}
 
         for i in range(numpages):
             if i == 0:
@@ -60,9 +60,37 @@ class Prediction:
     def get_predictions(self, tweets, model, bert_model):
         predictions = {}
         predictions["text_predictions"] = []
+        all_hashtags = dict()
+        positiveTweets = 0
+        negativeTweets = 0
+        neutralTweets = 0
+        count = 0
         for tweet in tweets:
+            if count == 1:
+                break
+            if "hashtags" in tweet["entities"].keys():
+                hashtags = tweet["entities"]["hashtags"]
+                for hashtag in hashtags:
+                    tag = hashtag["tag"]
+                    if tag in all_hashtags:
+                        all_hashtags[tag] += 1
+                    else:
+                        all_hashtags[tag] = 1
             text_prediction = self.get_sentiment(tweet["text"],  model, bert_model)
-            predictions["text_predictions"].append({"text": tweet["text"], "prediction":text_prediction[0], "score": text_prediction[1]})
+            if text_prediction[0] == "positive":
+                positiveTweets += 1
+            elif text_prediction[0] == "negative":
+                negativeTweets += 1
+            else:
+                neutralTweets += 1
+            predictions["text_predictions"].append({"text": tweet["text"], "prediction":text_prediction[0]})
+            count += 1
+
+        predictions["aggregate"] = {}
+        predictions["aggregate"]["hashtags"] = all_hashtags
+        predictions["aggregate"]["positiveTweets"] = positiveTweets
+        predictions["aggregate"]["negativeTweets"] = negativeTweets
+        predictions["aggregate"]["neutralTweets"] = neutralTweets
 
         return predictions
 
@@ -70,8 +98,10 @@ class Prediction:
 if __name__ == "__main__":
     twitter_api = TwitterAPI()
     get_tweets = twitter_api.functionality("get_tweets")
-    tweets = get_tweets.get_twitter_tweets("biden")
+    tweets = get_tweets.get_twitter_tweets("#biden")
     # tweets = ["One of them and testing it"]
+
+    # print(tweets)
 
     models = MLModel()
     model = models.select_model("BertSent")
