@@ -25,14 +25,17 @@
             </section>
         </div> 
         <div class="charts">
-            <div class="pieChart"><canvas id="pieChart" class="pieChart"></canvas></div>
-            <div class="myChart"><canvas id="myChart"></canvas></div>
+            <div class="Topic1pieChart"><canvas id="Topic1pieChart" class="Topic1pieChart"></canvas></div>
+            <div class="Topic2pieChart"><canvas id="Topic2pieChart" class="Topic2pieChart"></canvas></div>
+            <div class="Topic1BarChart"><canvas id="Topic1BarChart"></canvas></div>
+            <div class="Topic2BarChart"><canvas id="Topic2BarChart"></canvas></div>
             <div class="radarChart"><canvas id="radarChart"></canvas></div>
             <div class="scatterChart"><canvas id="scatterChart"></canvas></div>
             <div class="lineChart"><canvas id="lineChart"></canvas></div>
             <div class="polarAreaChart"><canvas id="polarAreaChart"></canvas></div>
             <h2>Suyash's chart 1</h2>
-            <div class="HashTagBarChart"><canvas id="HashTagBarChart"></canvas></div>
+            <div class="Topic1HashTagBarChart"><canvas id="Topic1HashTagBarChart"></canvas></div>
+            <div class="Topic2HashTagBarChart"><canvas id="Topic2HashTagBarChart"></canvas></div>
             <h2>Suyash's chart 2</h2>
             <div id="chart2"></div>
             <h2>Suyash's chart 3</h2>
@@ -40,22 +43,30 @@
         </div>
 
         <script type="text/javascript" charset="utf-8">
-            const ctx = document.getElementById('myChart');
-            const piectx = document.getElementById('pieChart');
+            const Topic1Barctx = document.getElementById('Topic1BarChart');
+            const Topic2Barctx = document.getElementById('Topic2BarChart');
+            const topic1piectx = document.getElementById('Topic1pieChart');
+            const topic2piectx = document.getElementById('Topic2pieChart');
             const radarcxt = document.getElementById('radarChart');
             const linectx=document.getElementById('lineChart');
             const polarAreactx=document.getElementById('polarAreaChart');
-            const hashctx = document.getElementById('HashTagBarChart');
+            const topic1hashctx = document.getElementById('Topic1HashTagBarChart');
+            const topic2hashctx = document.getElementById('Topic2HashTagBarChart');
 
             var result = {{ result | safe}};  
-            let positiveTweets = result.topic1.aggregate.positiveTweets;
-            let NegativeTweets = result.topic1.aggregate.negativeTweets;
-            let NeutralTweets = result.topic1.aggregate.neutralTweets;
-            let totalTweets = positiveTweets + NegativeTweets + NeutralTweets;
-            console.log(totalTweets)
+            let Topic1positiveTweets = result.topic1.aggregate.positiveTweets;
+            let Topic1NegativeTweets = result.topic1.aggregate.negativeTweets;
+            let Topic1NeutralTweets = result.topic1.aggregate.neutralTweets;
+            let Topic1totalTweets = Topic1positiveTweets + Topic1NegativeTweets + Topic1NeutralTweets;
+
+            let Topic2positiveTweets = result.topic2.aggregate.positiveTweets;
+            let Topic2NegativeTweets = result.topic2.aggregate.negativeTweets;
+            let Topic2NeutralTweets = result.topic2.aggregate.neutralTweets;
+            let Topic2totalTweets = Topic2positiveTweets + Topic2NegativeTweets + Topic2NeutralTweets;
+            console.log(Topic2totalTweets)
               
         
-            const barChart = new Chart(ctx, {
+            const topic1barChart = new Chart(Topic1Barctx, {
             type: 'bar',
             data: {
             labels: ["Positive", "Negative", "Neutral"],
@@ -81,24 +92,99 @@
                 y: {
                 beginAtZero: true
                 }
-            }
+            },
+            plugins: {
+                    title: {
+                        display: true,
+                        text: 'Topic 1 Bar chart'
+                    }
+                }
             }
         });
 
-        const pieChart = new Chart(piectx, {
-            type: 'doughnut',
+        const topic2barChart = new Chart(Topic2Barctx, {
+            type: 'bar',
             data: {
             labels: ["Positive", "Negative", "Neutral"],
             datasets: [{
-                label: '% of Positive and Negative sentiments',
+                label: '# of Positive and negative sentiments',
                 data: [0,0,0],
                 backgroundColor: [
                     'rgba(91, 240, 65, 0.6)',
                     'rgba(245, 7, 7, 0.6)',
                     'rgba(245, 193, 7, 0.6)'
                 ],
-                hoverOffset: 4
+                borderColor: [
+                    'rgb(53, 245, 20)',
+                    'rgb(245, 7, 7)',
+                    'rgb(245, 193, 7)'
+                ],
+                borderWidth: 1,
+                borderRadius: 10
             }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            },
+            plugins: {
+                    title: {
+                        display: true,
+                        text: 'Topic 2 Bar chart'
+                    }
+                }
+            }
+        });
+
+        const topic1pieChart = new Chart(topic1piectx, {
+            type: 'doughnut',
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Topic 1 Pie chart'
+                    }
+                }
+            },
+            data: {
+              labels: ["Positive", "Negative", "Neutral"],
+              datasets: [{
+                  label: '% of Positive and Negative sentiments',
+                  data: [0,0,0],
+                  backgroundColor: [
+                      'rgba(91, 240, 65, 0.6)',
+                      'rgba(245, 7, 7, 0.6)',
+                      'rgba(245, 193, 7, 0.6)'
+                  ],
+                  hoverOffset: 4
+              }]
+            }
+        });
+
+        const topic2pieChart = new Chart(topic2piectx, {
+            type: 'doughnut',
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Topic 2 Pie chart'
+                    }
+                }
+            },
+            data: {
+              labels: ["Positive", "Negative", "Neutral"],
+              datasets: [{
+                  label: '% of Positive and Negative sentiments',
+                  data: [0,0,0],
+                  backgroundColor: [
+                      'rgba(91, 240, 65, 0.6)',
+                      'rgba(245, 7, 7, 0.6)',
+                      'rgba(245, 193, 7, 0.6)'
+                  ],
+                  hoverOffset: 4
+              }]
             }
         });
             
@@ -179,7 +265,7 @@
 
 
 // --------------------------suyash code----------------------- 
-          const hashTagBar = new Chart(hashctx, {
+          const Topic1hashTagBar = new Chart(topic1hashctx, {
             type: 'bar',
             data: {
             labels: ["hash","hash","hash"],
@@ -213,7 +299,57 @@
                 y: {
                 beginAtZero: true
                 }
+            },
+            plugins: {
+                    title: {
+                        display: true,
+                        text: 'Topic 1 Top Hashtags'
+                    }
+                }
             }
+        });
+
+        const Topic2hashTagBar = new Chart(topic2hashctx, {
+            type: 'bar',
+            data: {
+            labels: ["hash","hash","hash"],
+            datasets: [{
+                label: 'Hashtags',
+                data: [0,0,0],
+                backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(255, 159, 64, 0.2)',
+                  'rgba(255, 205, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(201, 203, 207, 0.2)'
+                ],
+                borderColor: [
+                  'rgb(255, 99, 132)',
+                  'rgb(255, 159, 64)',
+                  'rgb(255, 205, 86)',
+                  'rgb(75, 192, 192)',
+                  'rgb(54, 162, 235)',
+                  'rgb(153, 102, 255)',
+                  'rgb(201, 203, 207)'
+                ],
+            borderWidth: 1,
+            borderRadius: 10
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            },
+            plugins: {
+                    title: {
+                        display: true,
+                        text: 'Topic 2 Top Hashtags'
+                    }
+                }
             }
         });
 
@@ -282,13 +418,47 @@ function displayTopWords(counts, n) {
 displayTopWords(sortedPositiveCounts, 5);
 displayTopWords(sortedNegativeCounts, 5);
 // --------------------------------------------Chart 3--------------------------------------------------------
-var hashtags = result.topic1.aggregate.hashtags;
+var topic1hashtags = result.topic1.aggregate.hashtags;
 
 var fontSize = d3.scalePow().exponent(5).domain([0,1]).range([10,80]);
 
 d3.layout.cloud().size([500, 500])
-  .words(Object.keys(hashtags).map(function(d) {
-    return {text: d, size: fontSize(hashtags[d])};
+  .words(Object.keys(topic1hashtags).map(function(d) {
+    return {text: d, size: fontSize(topic1hashtags[d])};
+  }))
+  .padding(5)
+  .rotate(function() { return ~~(Math.random() * 2) * 90; })
+  .font("Impact")
+  .fontSize(function(d) { return d.size; })
+  .on("end", draw)
+  .start();
+
+function draw(words) {
+  d3.select("#wordcloud").append("svg")
+    .attr("width", 500)
+    .attr("height", 500)
+    .append("g")
+    .attr("transform", "translate(250,250)")
+    .selectAll("text")
+    .data(words)
+    .enter().append("text")
+    .style("font-size", function(d) { return d.size + "px"; })
+    .style("font-family", "Impact")
+    .style("fill", function(d, i) { return d3.schemeCategory10[i % 10]; })
+    .attr("text-anchor", "middle")
+    .attr("transform", function(d) {
+      return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+    })
+    .text(function(d) { return d.text; });
+}
+
+var topic2hashtags = result.topic2.aggregate.hashtags;
+
+var fontSize = d3.scalePow().exponent(5).domain([0,1]).range([10,80]);
+
+d3.layout.cloud().size([500, 500])
+  .words(Object.keys(topic2hashtags).map(function(d) {
+    return {text: d, size: fontSize(topic2hashtags[d])};
   }))
   .padding(5)
   .rotate(function() { return ~~(Math.random() * 2) * 90; })
@@ -324,28 +494,43 @@ function draw(words) {
             const xValue = Math.random() * 100;
             const yValue = Math.random() * 100;
             let barhashtags;
-            let hashs = [];
-            let values = [];
+            let topic1hashs = [];
+            let topic1values = [];
+            let topic2hashs = [];
+            let topic2values = [];
 
-            for(var key in hashtags){
-              hashs.push(key)
-              values.push(hashtags[key])  
+            for(var key in topic1hashtags){
+              topic1hashs.push(key)
+              topic1values.push(topic1hashtags[key])  
             }
 
-            barChart.data.datasets[0].data = [positiveTweets, NegativeTweets, NeutralTweets]
-            pieChart.data.datasets[0].data = [(positiveTweets / totalTweets) * 100 , (NegativeTweets / totalTweets) * 100, (NeutralTweets / totalTweets) * 100]
-            radarChart.data.datasets[0].data = [positiveTweets, NegativeTweets, NeutralTweets];
-            lineChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
-            polarAreaChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
-            hashTagBar.data.datasets[0].data = values.slice(0,8);
-            hashTagBar.data.labels = hashs.slice(0,8);
+            for(var key in topic2hashtags){
+              topic2hashs.push(key)
+              topic2values.push(topic2hashtags[key])  
+            }
+
+            topic1barChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, Topic1NeutralTweets]
+            topic2barChart.data.datasets[0].data = [Topic2positiveTweets, Topic2NegativeTweets, Topic2NeutralTweets]
+            topic1pieChart.data.datasets[0].data = [(Topic1positiveTweets / Topic1totalTweets) * 100 , (Topic1NegativeTweets / Topic1totalTweets) * 100, (Topic1NeutralTweets / Topic1totalTweets) * 100]
+            topic2pieChart.data.datasets[0].data = [(Topic2positiveTweets / Topic2totalTweets) * 100 , (Topic2NegativeTweets / Topic2totalTweets) * 100, (Topic2NeutralTweets / Topic2totalTweets) * 100]
+            radarChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, Topic1NeutralTweets];
+            lineChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, 70, 65, 85];
+            polarAreaChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, 70, 65, 85];
+            
+            Topic1hashTagBar.data.datasets[0].data = topic1values.slice(0,8);
+            Topic1hashTagBar.data.labels = topic1hashs.slice(0,8);
+            Topic2hashTagBar.data.datasets[0].data = topic2values.slice(0,8);
+            Topic2hashTagBar.data.labels = topic2hashs.slice(0,8);
 
             radarChart.update();
-            barChart.update()
-            pieChart.update()
+            topic1barChart.update()
+            topic2barChart.update()
+            topic1pieChart.update()
+            topic2pieChart.update()
             lineChart.update()
             polarAreaChart.update();
-            hashTagBar.update()
+            Topic1hashTagBar.update()
+            Topic2hashTagBar.update()
           
         });
 
