@@ -220,28 +220,33 @@
             }
         });
             
-            // Set up the radarChart options
-            const radarChart = new Chart(radarcxt, {
-            type: 'radar',
-            data: {
-                labels: ['Positive', 'Negative', 'Neutral'],
-                datasets: [{
-                    label: 'Sentiment Analysis Metrics',
-                    data: [0, 0, 0],
-                    backgroundColor: 'rgba(91, 240, 65, 0.2)',
-                    borderColor: 'rgb(53, 245, 20)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    r: {
-                        min: 0,
-                        max: 1
+        // Set up the radarChart options
+        const radarChart = new Chart(radarcxt, {
+                type: 'radar',
+                data: {
+                    labels: ['Positive', 'Negative', 'Neutral'],
+                    datasets: [{
+                        label: 'Sentiment Analysis Metrics - Topic 1',
+                        data: [0, 0, 0],
+                        backgroundColor: 'rgba(91, 240, 65, 0.5)',
+                        borderColor: 'rgb(53, 245, 20)',
+                    }, {
+                        label: 'Sentiment Analysis Metrics - Topic 2',
+                        data: [0, 0, 0],
+                        backgroundColor: 'rgba(255, 193, 7, 0.5)',
+                        borderColor: 'rgb(255, 152, 0)',
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: Topic1totalTweets
+                        }
                     }
                 }
-            }
         });
+
 
     //---------------------------------Kajal Code------------------------------
 
@@ -546,6 +551,7 @@ function draw(words) {
             topic1pieChart.data.datasets[0].data = [(Topic1positiveTweets / Topic1totalTweets) * 100 , (Topic1NegativeTweets / Topic1totalTweets) * 100, (Topic1NeutralTweets / Topic1totalTweets) * 100]
             topic2pieChart.data.datasets[0].data = [(Topic2positiveTweets / Topic2totalTweets) * 100 , (Topic2NegativeTweets / Topic2totalTweets) * 100, (Topic2NeutralTweets / Topic2totalTweets) * 100]
             radarChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, Topic1NeutralTweets];
+            radarChart.data.datasets[1].data = [Topic2positiveTweets, Topic2NegativeTweets, Topic2NeutralTweets];
             lineChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, 70, 65, 85];
             polarAreaChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, 70, 65, 85];
             
