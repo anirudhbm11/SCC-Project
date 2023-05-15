@@ -17,9 +17,18 @@
     <body>
         <div class="card_tweets">
             <section class="tweets">
-                <h2>Tweets</h2>
+                <h2>Topic 1 Tweets</h2>
                 <div class="tweetMsg">
-                        <div id="log"></div><br>
+                    <!-- {% for text_preds in result.topic1.text_predictions %} -->
+                      <div id="topic1_log"></div><br>  
+                    <!-- {% endfor %}   -->
+                </div>
+
+                <h2>Topic 2 Tweets</h2>
+                <div class="tweetMsg">
+                    <!-- {% for text_preds in result.topic1.text_predictions %} -->
+                      <div id="topic2_log"></div><br>  
+                    <!-- {% endfor %}   -->
                 </div>
 
             </section>
@@ -53,7 +62,30 @@
             const topic1hashctx = document.getElementById('Topic1HashTagBarChart');
             const topic2hashctx = document.getElementById('Topic2HashTagBarChart');
 
-            var result = {{ result | safe}};  
+            var result = {{ result | safe}}; 
+            
+            result.topic1.text_predictions.forEach(function(text_preds){
+              console.log(text_preds)
+              if(text_preds.prediction.label == "positive"){
+                $('#topic1_log').append('<p style="color:green;">' +text_preds.text + '</p>');
+              }else if(text_preds.prediction.label == "negative"){
+                  $('#topic1_log').append('<p style="color:red;">' +text_preds.text + '</p>');
+              }else {
+                  $('#topic1_log').append('<p style="color:rgb(245, 193, 7);">' +text_preds.text + '</p>');
+              }
+            });
+
+            result.topic2.text_predictions.forEach(function(text_preds){
+              console.log(text_preds)
+              if(text_preds.prediction.label == "positive"){
+                $('#topic2_log').append('<p style="color:green;">' +text_preds.text + '</p>');
+              }else if(text_preds.prediction.label == "negative"){
+                  $('#topic2_log').append('<p style="color:red;">' +text_preds.text + '</p>');
+              }else {
+                  $('#topic2_log').append('<p style="color:rgb(245, 193, 7);">' +text_preds.text + '</p>');
+              }
+            });
+
             let Topic1positiveTweets = result.topic1.aggregate.positiveTweets;
             let Topic1NegativeTweets = result.topic1.aggregate.negativeTweets;
             let Topic1NeutralTweets = result.topic1.aggregate.neutralTweets;
