@@ -32,7 +32,7 @@
             <div class="lineChart"><canvas id="lineChart"></canvas></div>
             <div class="polarAreaChart"><canvas id="polarAreaChart"></canvas></div>
             <h2>Suyash's chart 1</h2>
-            <div id="chart"></div>
+            <div class="HashTagBarChart"><canvas id="HashTagBarChart"></canvas></div>
             <h2>Suyash's chart 2</h2>
             <div id="chart2"></div>
             <h2>Suyash's chart 3</h2>
@@ -45,6 +45,7 @@
             const radarcxt = document.getElementById('radarChart');
             const linectx=document.getElementById('lineChart');
             const polarAreactx=document.getElementById('polarAreaChart');
+            const hashctx = document.getElementById('HashTagBarChart');
 
             var result = {{ result | safe}};  
             let positiveTweets = result.topic1.aggregate.positiveTweets;
@@ -152,7 +153,7 @@
             }
             });
 
-                const polarAreaChart = new Chart(polarAreactx, {
+            const polarAreaChart = new Chart(polarAreactx, {
             type: 'polarArea',
             data: {
                 labels: ['Positive', 'Negative', 'Neutral', 'Intensity', 'Subjectivity'],
@@ -177,81 +178,44 @@
 
 
 
-    // --------------------------suyash code-----------------------
-    const tweets = [
-      "I love my new phone! #newphone #happy",
-      "Had a great time at the beach today! #beach #fun #sunshine",
-      "Stuck in traffic again! #traffic #frustrated",
-      "My phone just died and I lost all my data! #angry #phoneproblems",
-      "Just got a promotion at work! #excited #career #success",
-      "My boss yelled at me today for no reason. #unfair #upset #workproblems #newphone"
-    ];
-
-    // Function to extract hashtags from tweets
-    function extractHashtags(tweet) {
-      const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
-      const hashtags = [];
-      let match;
-      while ((match = regex.exec(tweet)) !== null) {
-        hashtags.push(match[1]);
-      }
-      return hashtags;
-    }
-
-    // Extract hashtags from all tweets
-    const allHashtags = tweets.flatMap(extractHashtags);
-
-    // Function to count hashtag occurrences
-    function countHashtags(hashtags) {
-      const counts = {};
-      hashtags.forEach(hashtag => {
-        counts[hashtag] = counts[hashtag] ? counts[hashtag] + 1 : 1;
-      });
-      return counts;
-    }
-
-    // Count hashtag occurrences for all tweets
-    const hashtagCounts = countHashtags(allHashtags);
-
-    // Function to sort hashtag counts by frequency
-    function sortHashtags(counts) {
-      return Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    }
-
-    // Sort hashtag counts by frequency
-    const sortedHashtagCounts = sortHashtags(hashtagCounts);
-
-    // Function to create data for Plotly chart
-    function createChartData(counts) {
-      const xValues = counts.map(item => item[0]);
-      const yValues = counts.map(item => item[1]);
-      const data = [
-        {
-          x: xValues,
-          y: yValues,
-          type: 'bar'
-        }
-      ];
-      return data;
-    }
-
-    // Create data for Plotly chart
-    const chartData = createChartData(sortedHashtagCounts);
-
-    // Define layout for Plotly chart
-    const chartLayout = {
-      title: 'Tweets Hashtags Chart',
-      xaxis: {
-        title: 'Hashtag',
-        tickangle: -45
-      },
-      yaxis: {
-        title: 'Occurrences'
-      }
-    };
-
-    // Create Plotly chart
-    Plotly.newPlot('chart', chartData, chartLayout);
+// --------------------------suyash code----------------------- 
+          const hashTagBar = new Chart(hashctx, {
+            type: 'bar',
+            data: {
+            labels: ["hash","hash","hash"],
+            datasets: [{
+                label: 'Hashtags',
+                data: [0,0,0],
+                backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(255, 159, 64, 0.2)',
+                  'rgba(255, 205, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(201, 203, 207, 0.2)'
+                ],
+                borderColor: [
+                  'rgb(255, 99, 132)',
+                  'rgb(255, 159, 64)',
+                  'rgb(255, 205, 86)',
+                  'rgb(75, 192, 192)',
+                  'rgb(54, 162, 235)',
+                  'rgb(153, 102, 255)',
+                  'rgb(201, 203, 207)'
+                ],
+            borderWidth: 1,
+            borderRadius: 10
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
 
 // -------------------------------------------chart 2----------------------------
 const positiveTweets1 = [
@@ -359,20 +323,29 @@ function draw(words) {
             //Test Data
             const xValue = Math.random() * 100;
             const yValue = Math.random() * 100;
+            let barhashtags;
+            let hashs = [];
+            let values = [];
+
+            for(var key in hashtags){
+              hashs.push(key)
+              values.push(hashtags[key])  
+            }
 
             barChart.data.datasets[0].data = [positiveTweets, NegativeTweets, NeutralTweets]
             pieChart.data.datasets[0].data = [(positiveTweets / totalTweets) * 100 , (NegativeTweets / totalTweets) * 100, (NeutralTweets / totalTweets) * 100]
             radarChart.data.datasets[0].data = [positiveTweets, NegativeTweets, NeutralTweets];
             lineChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
             polarAreaChart.data.datasets[0].data = [positiveTweets, NegativeTweets, 70, 65, 85];
-            
-            console.log(barChart.data.datasets.data)
+            hashTagBar.data.datasets[0].data = values.slice(0,8);
+            hashTagBar.data.labels = hashs.slice(0,8);
 
             radarChart.update();
             barChart.update()
             pieChart.update()
             lineChart.update()
             polarAreaChart.update();
+            hashTagBar.update()
           
         });
 

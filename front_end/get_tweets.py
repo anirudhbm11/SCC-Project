@@ -86,8 +86,11 @@ class Prediction:
             predictions["text_predictions"].append({"text": tweet["text"], "prediction":text_prediction[0]})
             count += 1
 
+        sorted_hashtags = dict(sorted(all_hashtags.items(), key=lambda x: x[1], reverse=True))
+        print(sorted_hashtags)
+
         predictions["aggregate"] = {}
-        predictions["aggregate"]["hashtags"] = all_hashtags
+        predictions["aggregate"]["hashtags"] = sorted_hashtags
         predictions["aggregate"]["positiveTweets"] = positiveTweets
         predictions["aggregate"]["negativeTweets"] = negativeTweets
         predictions["aggregate"]["neutralTweets"] = neutralTweets
