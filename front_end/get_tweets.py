@@ -48,7 +48,7 @@ class Prediction:
     def get_sentiment(self, tweet, model, bert_model): 
         text_prediction = {}
         prediction_and_score = model.predict(tweet, bert_model)
-        prediction = prediction_and_score[0]
+        prediction = prediction_and_score
         if(prediction == "LABEL_2"):
             text_prediction["label"] = "positive"
         elif prediction == "LABEL_1":
@@ -66,8 +66,8 @@ class Prediction:
         neutralTweets = 0
         count = 0
         for tweet in tweets:
-            if count == 1:
-                break
+            # if count == 1:
+            #     break
             if "hashtags" in tweet["entities"].keys():
                 hashtags = tweet["entities"]["hashtags"]
                 for hashtag in hashtags:
@@ -77,9 +77,9 @@ class Prediction:
                     else:
                         all_hashtags[tag] = 1
             text_prediction = self.get_sentiment(tweet["text"],  model, bert_model)
-            if text_prediction[0] == "positive":
+            if text_prediction[0]["label"] == "positive":
                 positiveTweets += 1
-            elif text_prediction[0] == "negative":
+            elif text_prediction[0]["label"] == "negative":
                 negativeTweets += 1
             else:
                 neutralTweets += 1

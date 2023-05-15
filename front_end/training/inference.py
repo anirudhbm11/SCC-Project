@@ -80,7 +80,7 @@ class BertSent(MLmodelTasks):
         sentiment = output.argmax().item()
         predicted_label = model.config.id2label[sentiment]
 
-        return (predicted_label, output)
+        return predicted_label
 
     def get_model(self):
         model = TFAutoModelForSequenceClassification.from_pretrained("rabindralamsal/finetuned-bertweet-sentiment-analysis")
