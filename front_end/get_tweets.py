@@ -68,6 +68,7 @@ class Prediction:
         for tweet in tweets:
             # if count == 1:
             #     break
+            print(tweet)
             if "hashtags" in tweet["entities"].keys():
                 hashtags = tweet["entities"]["hashtags"]
                 for hashtag in hashtags:
@@ -102,9 +103,7 @@ if __name__ == "__main__":
     twitter_api = TwitterAPI()
     get_tweets = twitter_api.functionality("get_tweets")
     tweets = get_tweets.get_twitter_tweets("#biden")
-    # tweets = ["One of them and testing it"]
-
-    # print(tweets)
+    tweets = ["One of them and testing it"]
 
     models = MLModel()
     model = models.select_model("BertSent")
