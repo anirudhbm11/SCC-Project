@@ -17,18 +17,18 @@
     <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     </head>
-    
+
     <body>
-        
+        <canvas id="canvas"></canvas>
         <div style="display: flex;">
-            <div style="flex: 1; margin-right: 10px; background-color: rgba(255, 255, 255, 0.8);">
+            <div style="flex: 1; margin-right: 10px; background-color: rgba(255, 255, 255, 0.8); overflow: auto; max-height: 400px;">
               <h2>Topic 1 Tweets</h2>
               <div class="tweetMsg">
                 <!-- code to display tweets for Topic 1 -->
                 <div id="topic1_log"></div><br>
               </div>
             </div>
-            <div style="flex: 1; margin-left: 10px; background-color: rgba(255, 255, 255, 0.8);">
+            <div style="flex: 1; margin-left: 10px; background-color: rgba(255, 255, 255, 0.8); overflow: auto; max-height: 400px;">
               <h2>Topic 2 Tweets</h2>
               <div class="tweetMsg">
                 <div id="topic2_log"></div><br>
@@ -37,10 +37,24 @@
             </div>
           </div>
           
-            
-            
-            
-        <style>
+             
+        <style> 
+                html, body {
+                    margin: 0;
+                    padding: 0;
+                    height: 100%;
+                }
+                
+                #canvas {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: -1;
+                }
+
+
                 .chart {
                     margin-right: 40px;
                     width: 70%;
@@ -70,7 +84,8 @@
                     text-align: center;
                 }
             </style>
-            
+
+            <div class="back">
             <div class="row">
                 <div class="column">
                     <div class="chart">
@@ -114,8 +129,8 @@
                     <div class="chart">
                         <h2>Radar Chart</h2>
                         <div class="radarChart"><canvas id="radarChart"></canvas></div>
-                    </div>
-                   
+                </div>
+            </div>   
             
                     
 
@@ -592,9 +607,91 @@ function draw(words) {
     })
     .text(function(d) { return d.text; });
 }
+var livePattern = {
+        canvas: null,
+        context: null,
+        cols: 0,
+        rows: 0,
+        colors: [242, 241, 239, 238, 231, 230],
+        triangleColors: [],
+        destColors: [],
+
+        init: function(){
+          this.canvas = document.getElementById('canvas');
+          this.context = this.canvas.getContext('2d');
+          this.cols = Math.floor(document.body.clientWidth / 24);
+          this.rows = Math.floor(document.body.clientHeight / 24) + 1;
+
+          this.canvas.width = document.body.clientWidth;
+          this.canvas.height = document.body.clientHeight;
+
+          this.drawBackground();
+          this.animate();
+        },
+
+        drawTriangle: function(x, y, color, inverted){
+          inverted = inverted == undefined ? false : inverted;
+
+          this.context.beginPath();
+          this.context.moveTo(x, y);
+          this.context.lineTo(inverted ? x - 22 : x + 22, y + 11);
+          this.context.lineTo(x, y + 22);
+          this.context.fillStyle = "rgb("+color+","+color+","+color+")";
+          this.context.fill();
+          this.context.closePath();
+        },
+
+        getColor: function(){    
+          return this.colors[(Math.floor(Math.random() * 6))];
+        },
+
+        drawBackground: function(){
+          var eq = null;
+          var x = this.cols;
+          var destY = 0;
+          var color, y;
+
+          while(x--){
+            eq = x % 2;
+            y = this.rows;
+
+            while(y--){
+              destY = Math.round((y-0.5) * 24);
+
+              this.drawTriangle(x * 24 + 2, eq == 1 ? destY : y * 24, this.getColor());
+              this.drawTriangle(x * 24, eq == 1 ? destY  : y * 24, this.getColor(), true);
+            }
+          }
+        },
+
+        animate: function(){
+          var me = this;
+
+          var x = Math.floor(Math.random() * this.cols);
+          var y = Math.floor(Math.random() * this.rows);
+          var eq = x % 2;
+
+          if (eq == 1) {
+            me.drawTriangle(x * 24, Math.round((y-0.5) * 24) , this.getColor(), true);
+          } else {
+            me.drawTriangle(x * 24 + 2, y * 24, this.getColor());
+          }
+
+          setTimeout(function(){    
+            me.animate.call(me);
+          }, 10);
+        },
+      };
+
+      window.addEventListener('load', function(){
+        livePattern.init();
+      });
+
+
+
+
 
 // -----------------------------------------suyash-------------------------------------------------------
-
         $(document).ready(function() {
 
             //Test Data
@@ -641,6 +738,7 @@ function draw(words) {
             Topic2hashTagBar.update()
           
         });
+
 
     </script>
     </body>
