@@ -2,8 +2,8 @@
     width: 600px;
     margin: auto;
     font-family: Arial, Helvetica, sans-serif;
-    background-color: rgb(65, 76, 128);
-    padding: 2rem;
+    background: #0575E6; 
+background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);    padding: 2rem;
     color: white;
     border-radius: 20px;
     position: relative;
@@ -99,7 +99,7 @@
     display: inline-block;
 } */
 .form_group {
-    border: 1px solid grey;
+    border: 1px solid rgb(255, 255, 255);
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
@@ -108,7 +108,7 @@
 }
 
 .form_group label {
-    color: grey;
+    color: rgb(255, 255, 255);
     display: flex;
     justify-content: space-between;
 }
