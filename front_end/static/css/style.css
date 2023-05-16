@@ -2,12 +2,31 @@
     width: 600px;
     margin: auto;
     font-family: Arial, Helvetica, sans-serif;
-    background-color: rgb(12, 12, 32);
+    background-color: rgb(65, 76, 128);
     padding: 2rem;
     color: white;
     border-radius: 20px;
     position: relative;
 }
+
+.header {
+    background-color: #1da1f2;
+    color: #fff;
+    padding: 20px;
+  }
+  
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Adjust this value as needed */
+  }
+  
+.middle-section {
+    width: 80%; /* Adjust this value as needed */
+    background-color: #f0f0f0;
+    padding: 20px;
+  }
 
 .card_tweets {
     width: 600px;
@@ -66,6 +85,19 @@
     color: red;
 }
 
+/* .row {
+    display: flex;
+}
+
+.form_group {
+    flex: 50%;
+} */
+
+/* label, input {
+    width: 200px; 
+    height: 30px;
+    display: inline-block;
+} */
 .form_group {
     border: 1px solid grey;
     display: flex;
