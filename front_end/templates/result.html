@@ -1,55 +1,123 @@
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/d3-cloud@1.2.5/build/d3.layout.cloud.js"></script>
-        <title>Real-time Sentiment Analysis</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Sentiment Analysis</title>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-cloud@1.2.5/build/d3.layout.cloud.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     </head>
+    
     <body>
-        <div class="card_tweets">
-            <section class="tweets">
-                <h2>Topic 1 Tweets</h2>
-                <div class="tweetMsg">
-                    <!-- {% for text_preds in result.topic1.text_predictions %} -->
-                      <div id="topic1_log"></div><br>  
-                    <!-- {% endfor %}   -->
+        
+        <div style="display: flex;">
+            <div style="flex: 1; margin-right: 10px; background-color: rgba(255, 255, 255, 0.8);">
+              <h2>Topic 1 Tweets</h2>
+              <div class="tweetMsg">
+                <!-- code to display tweets for Topic 1 -->
+              </div>
+            </div>
+            <div style="flex: 1; margin-left: 10px; background-color: rgba(255, 255, 255, 0.8);">
+              <h2>Topic 2 Tweets</h2>
+              <div class="tweetMsg">
+                <!-- code to display tweets for Topic 2 -->
+              </div>
+            </div>
+          </div>
+          
+            
+            
+            
+        <style>
+                .chart {
+                    margin-right: 40px;
+                    width: 70%;
+                }
+            
+                h2 {
+                    font-size: 1.5em;
+                }
+            
+                .row {
+                    display: flex;
+                    flex-wrap: wrap;
+                    margin-left: auto;
+                    margin-right: auto;
+                    margin-top: 20px;
+                }
+            
+                .column {
+                    flex: 1;
+                    margin-bottom: 20px;
+                }
+            
+                /* Center the parent container on the page */
+                body, html {
+                    margin: 0;
+                    padding: 0;
+                    text-align: center;
+                }
+            </style>
+            
+            <div class="row">
+                <div class="column">
+                    <div class="chart">
+                        <h2>Pie Chart</h2>
+                        <div class="Topic1pieChart"><canvas id="Topic1pieChart" class="Topic1pieChart"></canvas></div>
+                    </div>
+                    <div class="chart">
+                        <h2>Bar Chart</h2>
+                        <div class="Topic1BarChart"><canvas id="Topic1BarChart"></canvas></div>
+                    </div>
+                    <div class="chart">
+                        <h2>Line Chart</h2>
+                        <div class="lineChart"><canvas id="lineChart"></canvas></div>
+                    </div>
+                    <div class="chart">
+                        <h2>Polar Area Chart</h2>
+                        <div class="polarAreaChart"><canvas id="polarAreaChart"></canvas></div>
+                    </div>
+                    <div class="chart">
+                        <h2>Top Hashtags</h2>
+                        <div class="Topic1HashTagBarChart"><canvas id="Topic1HashTagBarChart"></canvas></div>
+                    </div>
+                    <div class="chart">
+                        <h2>Top 5 words </h2>
+                        <div id="chart2"></div>
+                    </div>
+                    <div class="chart">
+                        <h2>Word Cloud</h2>
+                        <div id="wordcloud"></div>
+                    </div>
                 </div>
+                <div class="column">
+                    <div class="chart">
+                        <h2>Pie Chart</h2>
+                        <div class="Topic2pieChart"><canvas id="Topic2pieChart" class="Topic2pieChart"></canvas></div>
+                    </div>
+                    <div class="chart">
+                        <h2>Bar Chart</h2>
+                        <div class="Topic2BarChart"><canvas id="Topic2BarChart"></canvas></div>
+                    </div>
+                    <div class="chart">
+                        <h2>Radar Chart</h2>
+                        <div class="radarChart"><canvas id="radarChart"></canvas></div>
+                    </div>
+                   
+            
+                    
 
-                <h2>Topic 2 Tweets</h2>
-                <div class="tweetMsg">
-                    <!-- {% for text_preds in result.topic1.text_predictions %} -->
-                      <div id="topic2_log"></div><br>  
-                    <!-- {% endfor %}   -->
-                </div>
-
-            </section>
-        </div> 
-        <div class="charts">
-            <div class="Topic1pieChart"><canvas id="Topic1pieChart" class="Topic1pieChart"></canvas></div>
-            <div class="Topic2pieChart"><canvas id="Topic2pieChart" class="Topic2pieChart"></canvas></div>
-            <div class="Topic1BarChart"><canvas id="Topic1BarChart"></canvas></div>
-            <div class="Topic2BarChart"><canvas id="Topic2BarChart"></canvas></div>
-            <div class="radarChart"><canvas id="radarChart"></canvas></div>
-            <div class="scatterChart"><canvas id="scatterChart"></canvas></div>
-            <div class="lineChart"><canvas id="lineChart"></canvas></div>
-            <div class="polarAreaChart"><canvas id="polarAreaChart"></canvas></div>
-            <h2>Suyash's chart 1</h2>
-            <div class="Topic1HashTagBarChart"><canvas id="Topic1HashTagBarChart"></canvas></div>
-            <div class="Topic2HashTagBarChart"><canvas id="Topic2HashTagBarChart"></canvas></div>
-            <h2>Suyash's chart 2</h2>
-            <div id="chart2"></div>
-            <h2>Suyash's chart 3</h2>
-            <div id="wordcloud"></div>
-        </div>
+        
 
         <script type="text/javascript" charset="utf-8">
             const Topic1Barctx = document.getElementById('Topic1BarChart');
