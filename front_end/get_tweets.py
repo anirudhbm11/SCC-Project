@@ -65,10 +65,15 @@ class Prediction:
         negativeTweets = 0
         neutralTweets = 0
         count = 0
+        tweets_created_date = {}
         for tweet in tweets:
-            # if count == 1:
-            #     break
-            print(tweet)
+            if count == 1:
+                break
+            date = tweet["created_at"].split("T")[0]
+            if date in tweets_created_date:
+                tweets_created_date[date] += 1
+            else:
+                tweets_created_date[date] = 1
             if "hashtags" in tweet["entities"].keys():
                 hashtags = tweet["entities"]["hashtags"]
                 for hashtag in hashtags:
@@ -95,6 +100,7 @@ class Prediction:
         predictions["aggregate"]["positiveTweets"] = positiveTweets
         predictions["aggregate"]["negativeTweets"] = negativeTweets
         predictions["aggregate"]["neutralTweets"] = neutralTweets
+        predictions["aggregate"]["tweets_created_date"] = tweets_created_date
 
         return predictions
 
@@ -103,7 +109,7 @@ if __name__ == "__main__":
     twitter_api = TwitterAPI()
     get_tweets = twitter_api.functionality("get_tweets")
     tweets = get_tweets.get_twitter_tweets("#biden")
-    tweets = ["One of them and testing it"]
+    # tweets = ["One of them and testing it"]
 
     models = MLModel()
     model = models.select_model("BertSent")

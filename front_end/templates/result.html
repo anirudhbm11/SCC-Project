@@ -81,14 +81,10 @@
                     </div>
                     <div class="chart">
                         <h2>Line Chart</h2>
-                        <div class="lineChart"><canvas id="lineChart"></canvas></div>
+                        <div class="Topic1lineChart"><canvas id="Topic1lineChart"></canvas></div>
                     </div>
                     <div class="chart">
-                        <h2>Polar Area Chart</h2>
-                        <div class="polarAreaChart"><canvas id="polarAreaChart"></canvas></div>
-                    </div>
-                    <div class="chart">
-                        <h2>Top Hashtags</h2>
+                        <h2>Top Topic 1 Hashtags</h2>
                         <div class="Topic1HashTagBarChart"><canvas id="Topic1HashTagBarChart"></canvas></div>
                     </div>
                     <div class="chart">
@@ -110,6 +106,14 @@
                         <div class="Topic2BarChart"><canvas id="Topic2BarChart"></canvas></div>
                     </div>
                     <div class="chart">
+                      <h2>Line Chart</h2>
+                      <div class="Topic2lineChart"><canvas id="Topic2lineChart"></canvas></div>
+                    </div>
+                    <div class="chart">
+                      <h2>Top Topic 2 Hashtags</h2>
+                      <div class="Topic2HashTagBarChart"><canvas id="Topic2HashTagBarChart"></canvas></div>
+                    </div>
+                    <div class="chart">
                         <h2>Radar Chart</h2>
                         <div class="radarChart"><canvas id="radarChart"></canvas></div>
                 </div>
@@ -125,8 +129,8 @@
             const topic1piectx = document.getElementById('Topic1pieChart');
             const topic2piectx = document.getElementById('Topic2pieChart');
             const radarcxt = document.getElementById('radarChart');
-            const linectx=document.getElementById('lineChart');
-            const polarAreactx=document.getElementById('polarAreaChart');
+            const topic1linectx=document.getElementById('Topic1lineChart').getContext('2d');;
+            const topic2linectx=document.getElementById('Topic2lineChart').getContext('2d');;
             const topic1hashctx = document.getElementById('Topic1HashTagBarChart');
             const topic2hashctx = document.getElementById('Topic2HashTagBarChart');
 
@@ -318,55 +322,33 @@
 
     //---------------------------------Kajal Code------------------------------
 
-        const lineChart = new Chart(linectx, {
+        const topic1lineChart = new Chart(topic1linectx, {
             type: 'line',
             data: {
-                labels: ['Positive', 'Negative', 'Neutral', 'Intensity', 'Subjectivity'], // Array of labels for the x-axis
+                labels: ["date1","date2"], // Array of labels for the x-axis
+                datasets: [{
+                  label: 'Line Chart',
+                  data: [1,2], // Array of data points for the y-axis
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                  borderColor: 'rgba(255, 99, 132, 1)',
+                  borderWidth: 1
+                }]
+            }
+            });
+
+            const topic2lineChart = new Chart(topic2linectx, {
+            type: 'line',
+            data: {
+                labels: ["date1","date2"], // Array of labels for the x-axis
                 datasets: [{
                 label: 'Line Chart',
-                data: [], // Array of data points for the y-axis
+                data: [1,2], // Array of data points for the y-axis
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1
                 }]
-            },
-            options: {
-                scales: {
-                x: {
-                    type: 'linear',
-                    position: 'bottom'
-                },
-                y: {
-                    type: 'linear',
-                    position: 'left'
-                }
-                }
             }
-            });
-
-            const polarAreaChart = new Chart(polarAreactx, {
-            type: 'polarArea',
-            data: {
-                labels: ['Positive', 'Negative', 'Neutral', 'Intensity', 'Subjectivity'],
-                datasets: [{
-                label: 'Polar Area Chart',
-                data: [10, 20, 30, 40, 50],
-                backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)'],
-                borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
-                borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                r: {
-                    suggestedMin: 0,
-                    suggestedMax: 100
-                }
-                }
-            }
-            });
-
-
+            })
 
 
 // --------------------------suyash code----------------------- 
@@ -685,6 +667,12 @@ var livePattern = {
             let topic1values = [];
             let topic2hashs = [];
             let topic2values = [];
+            let topic1dates = [];
+            let topic2dates = [];
+            let topic1datecount = [];
+            let topic2datecount = [];
+            let topic1datedict = result.topic1.aggregate.tweets_created_date;
+            let topic2datedict = result.topic2.aggregate.tweets_created_date;
 
             for(var key in topic1hashtags){
               topic1hashs.push(key)
@@ -696,29 +684,41 @@ var livePattern = {
               topic2values.push(topic2hashtags[key])  
             }
 
+            for(var key in topic1datedict){
+              topic1dates.push(key)
+              topic1datecount.push(topic1datedict[key])
+            }
+
+            for(var key in topic2datedict){
+              topic2dates.push(key)
+              topic2datecount.push(topic2datedict[key])
+            }
+
             topic1barChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, Topic1NeutralTweets]
             topic2barChart.data.datasets[0].data = [Topic2positiveTweets, Topic2NegativeTweets, Topic2NeutralTweets]
             topic1pieChart.data.datasets[0].data = [(Topic1positiveTweets / Topic1totalTweets) * 100 , (Topic1NegativeTweets / Topic1totalTweets) * 100, (Topic1NeutralTweets / Topic1totalTweets) * 100]
             topic2pieChart.data.datasets[0].data = [(Topic2positiveTweets / Topic2totalTweets) * 100 , (Topic2NegativeTweets / Topic2totalTweets) * 100, (Topic2NeutralTweets / Topic2totalTweets) * 100]
             radarChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, Topic1NeutralTweets];
             radarChart.data.datasets[1].data = [Topic2positiveTweets, Topic2NegativeTweets, Topic2NeutralTweets];
-            lineChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, 70, 65, 85];
-            polarAreaChart.data.datasets[0].data = [Topic1positiveTweets, Topic1NegativeTweets, 70, 65, 85];
             
             Topic1hashTagBar.data.datasets[0].data = topic1values.slice(0,8);
             Topic1hashTagBar.data.labels = topic1hashs.slice(0,8);
             Topic2hashTagBar.data.datasets[0].data = topic2values.slice(0,8);
             Topic2hashTagBar.data.labels = topic2hashs.slice(0,8);
+            topic1lineChart.data.labels = topic1dates
+            topic1lineChart.data.datasets[0].data = topic1datecount
+            topic2lineChart.data.labels = topic2dates
+            topic2lineChart.data.datasets[0].data = topic2datecount
 
             radarChart.update();
             topic1barChart.update()
             topic2barChart.update()
             topic1pieChart.update()
             topic2pieChart.update()
-            lineChart.update()
-            polarAreaChart.update();
             Topic1hashTagBar.update()
             Topic2hashTagBar.update()
+            topic1lineChart.update()
+            topic2lineChart.update()
           
         });
 
