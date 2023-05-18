@@ -88,11 +88,7 @@
                         <div class="Topic1HashTagBarChart"><canvas id="Topic1HashTagBarChart"></canvas></div>
                     </div>
                     <div class="chart">
-                        <h2>Top 5 words </h2>
-                        <div id="chart2"></div>
-                    </div>
-                    <div class="chart">
-                        <h2>Word Cloud</h2>
+                        <h2>Word Cloud Topic 1</h2>
                         <div id="wordcloud"></div>
                     </div>
                 </div>
@@ -113,6 +109,10 @@
                       <h2>Top Topic 2 Hashtags</h2>
                       <div class="Topic2HashTagBarChart"><canvas id="Topic2HashTagBarChart"></canvas></div>
                     </div>
+                    <div class="chart">
+                      <h2>Word Cloud Topic 2</h2>
+                      <div id="wordcloud2"></div>
+                  </div>
                     <div class="chart">
                         <h2>Radar Chart</h2>
                         <div class="radarChart"><canvas id="radarChart"></canvas></div>
@@ -491,7 +491,7 @@ d3.layout.cloud().size([500, 500])
   .start();
 
 function draw(words) {
-  d3.select("#wordcloud").append("svg")
+  d3.select("#wordcloud2").append("svg")
     .attr("width", 500)
     .attr("height", 500)
     .append("g")
