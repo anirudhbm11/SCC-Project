@@ -17,29 +17,36 @@ class TwitterAPI:
             raise NotImplementedError
 
 class GetTweets():
-    def get_twitter_tweets(self, query, language="en",numpages=1):
+    def get_twitter_tweets(self, query, language="en",numpages=5):
         auth = Authentication()
         bearer_token = auth.authentication_type("bearer")
         next_page = 0
         tweets = []
+        i = numpages
 
         query_params = {'query':query + " lang:en -is:retweet",'tweet.fields':"created_at,lang,entities"}
 
-        for i in range(numpages):
-            if i == 0:
+        while i != 0:
+            if i == numpages:
                 response = requests.get("https://api.twitter.com/2/tweets/search/recent",params=query_params,headers=bearer_token)
                 # print(response)
             else:
                 query_params["next_token"] = next_page
                 response = requests.get("https://api.twitter.com/2/tweets/search/recent",params=query_params,headers=bearer_token)
-
             response = response.json()
-            next_page = response["meta"]["next_token"]
+            if "next_token" in response["meta"].keys():
+                next_page = response["meta"]["next_token"]
+            else:
+                next_page = None
             data = response["data"]
             for j, row in enumerate(data):
                 # print(str(j)+": " + row["text"])
                 # print("\n")
                 tweets.append(row)
+            i -= 1
+
+            if next_page == None:
+                break
 
         return tweets
 
@@ -52,9 +59,9 @@ class Prediction:
         if(prediction == "LABEL_2"):
             text_prediction["label"] = "positive"
         elif prediction == "LABEL_1":
-            text_prediction["label"] = "negative"
-        else:
             text_prediction["label"] = "neutral"
+        else:
+            text_prediction["label"] = "negative"
         return (text_prediction, prediction_and_score)
 
     def get_predictions(self, tweets, model, bert_model):
@@ -67,8 +74,8 @@ class Prediction:
         count = 0
         tweets_created_date = {}
         for tweet in tweets:
-            if count == 1:
-                break
+            # if count == 1:
+            #     break
             date = tweet["created_at"].split("T")[0]
             if date in tweets_created_date:
                 tweets_created_date[date] += 1
@@ -93,14 +100,14 @@ class Prediction:
             count += 1
 
         sorted_hashtags = dict(sorted(all_hashtags.items(), key=lambda x: x[1], reverse=True))
-        print(sorted_hashtags)
+        sorted_tweets_created_date = dict(sorted(tweets_created_date.items(), key=lambda x: x[0]))
 
         predictions["aggregate"] = {}
         predictions["aggregate"]["hashtags"] = sorted_hashtags
         predictions["aggregate"]["positiveTweets"] = positiveTweets
         predictions["aggregate"]["negativeTweets"] = negativeTweets
         predictions["aggregate"]["neutralTweets"] = neutralTweets
-        predictions["aggregate"]["tweets_created_date"] = tweets_created_date
+        predictions["aggregate"]["tweets_created_date"] = sorted_tweets_created_date
 
         return predictions
 
@@ -108,7 +115,7 @@ class Prediction:
 if __name__ == "__main__":
     twitter_api = TwitterAPI()
     get_tweets = twitter_api.functionality("get_tweets")
-    tweets = get_tweets.get_twitter_tweets("#biden")
+    tweets = get_tweets.get_twitter_tweets("#banai")
     # tweets = ["One of them and testing it"]
 
     models = MLModel()

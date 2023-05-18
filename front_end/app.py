@@ -3,12 +3,17 @@ import socket
 from get_tweets import TwitterAPI
 import json
 import pickle
+from training.inference import MLModel
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
 final_topic1_predictions = {}
 final_topic2_predictions = {}
+
+models = MLModel()
+model = models.select_model("BertSent")
+bert_model = model.get_model()
 
 @app.route('/',methods = ['POST', 'GET'])
 def index_page():
@@ -26,34 +31,38 @@ def index_page():
         topic2_tweets = get_tweets.get_twitter_tweets(topic2)
         # tweets = json.dumps(tweets)
 
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((host, port))
-            dumped_topic1_tweets = pickle.dumps(topic1_tweets)
+        predictions_helper = twitter_api.functionality("prediction_helper")
+        final_topic1_predictions = predictions_helper.get_predictions(topic1_tweets, model, bert_model)
+        final_topic2_predictions = predictions_helper.get_predictions(topic2_tweets, model, bert_model)
 
-            # print({"tweets":tweets})
-            # final_tweets = {"tweets":tweets}
-            # final_tweets = json.dumps(final_tweets).replace('\r', '')
-            # encoded_tweets = final_tweets.encode('utf-8')
-            print("Topic 1......")
-            s.send(dumped_topic1_tweets)
-            # print(s.recv(1024).decode())
-            topic1_predictions = s.recv(100024)
-            final_topic1_predictions = pickle.loads(topic1_predictions)
-            # print(final_topic1_predictions)
+        # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #     s.connect((host, port))
+        #     dumped_topic1_tweets = pickle.dumps(topic1_tweets)
 
-            s.close()
+        #     # print({"tweets":tweets})
+        #     # final_tweets = {"tweets":tweets}
+        #     # final_tweets = json.dumps(final_tweets).replace('\r', '')
+        #     # encoded_tweets = final_tweets.encode('utf-8')
+        #     print("Topic 1......")
+        #     s.send(dumped_topic1_tweets)
+        #     # print(s.recv(1024).decode())
+        #     topic1_predictions = s.recv(100024)
+        #     final_topic1_predictions = pickle.loads(topic1_predictions)
+        #     # print(final_topic1_predictions)
 
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            print("TOPIC 2:.....")    
-            s.connect((host, port))
-            dumped_topic2_tweets = pickle.dumps(topic2_tweets)
-            s.send(dumped_topic2_tweets)
-            # print(s.recv(1024).decode())
-            topic2_predictions = s.recv(100024)
-            final_topic2_predictions = pickle.loads(topic2_predictions)
-            # predictions.append(pickle.loads(prediction))
-            # print(final_topic2_predictions)
-            s.close()
+        #     s.close()
+
+        # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #     print("TOPIC 2:.....")    
+        #     s.connect((host, port))
+        #     dumped_topic2_tweets = pickle.dumps(topic2_tweets)
+        #     s.send(dumped_topic2_tweets)
+        #     # print(s.recv(1024).decode())
+        #     topic2_predictions = s.recv(100024)
+        #     final_topic2_predictions = pickle.loads(topic2_predictions)
+        #     # predictions.append(pickle.loads(prediction))
+        #     # print(final_topic2_predictions)
+        #     s.close()
 
         return redirect(url_for('result'))
 
