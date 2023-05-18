@@ -81,14 +81,15 @@ class Prediction:
                 tweets_created_date[date] += 1
             else:
                 tweets_created_date[date] = 1
-            if "hashtags" in tweet["entities"].keys():
-                hashtags = tweet["entities"]["hashtags"]
-                for hashtag in hashtags:
-                    tag = hashtag["tag"]
-                    if tag in all_hashtags:
-                        all_hashtags[tag] += 1
-                    else:
-                        all_hashtags[tag] = 1
+            if "entities" in tweet.keys():
+                if "hashtags" in tweet["entities"].keys():
+                    hashtags = tweet["entities"]["hashtags"]
+                    for hashtag in hashtags:
+                        tag = hashtag["tag"]
+                        if tag in all_hashtags:
+                            all_hashtags[tag] += 1
+                        else:
+                            all_hashtags[tag] = 1
             text_prediction = self.get_sentiment(tweet["text"],  model, bert_model)
             if text_prediction[0]["label"] == "positive":
                 positiveTweets += 1
@@ -115,7 +116,7 @@ class Prediction:
 if __name__ == "__main__":
     twitter_api = TwitterAPI()
     get_tweets = twitter_api.functionality("get_tweets")
-    tweets = get_tweets.get_twitter_tweets("#banai")
+    tweets = get_tweets.get_twitter_tweets("banai")
     # tweets = ["One of them and testing it"]
 
     models = MLModel()
