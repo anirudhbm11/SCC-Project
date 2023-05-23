@@ -54,6 +54,9 @@ class LogisticRegression(MLmodelTasks):
         return model
 
 class BertModel(MLmodelTasks):
+    '''
+    Calling the saved model and using it for inference
+    '''
     def predict(self,text):
         # model = self.get_model()
         text = self.clean_data(text)
@@ -70,36 +73,17 @@ class BertModel(MLmodelTasks):
         model = BertForSequenceClassification.from_pretrained('training/bert_soc',num_labels = 2,output_attentions = False,output_hidden_states = False)
         return model
 
-class BertSent(MLmodelTasks):
-    def predict(self, text, model):
-        # model = self.get_model()
-        text = self.clean_data(text)
-        tokenizer = AutoTokenizer.from_pretrained("rabindralamsal/finetuned-bertweet-sentiment-analysis")
-        input_ = tokenizer.encode(text, return_tensors="tf")
-        output = model.predict(input_)[0]
-        sentiment = output.argmax().item()
-        predicted_label = model.config.id2label[sentiment]
-
-        return predicted_label
-
-    def get_model(self):
-        model = TFAutoModelForSequenceClassification.from_pretrained("rabindralamsal/finetuned-bertweet-sentiment-analysis")
-        return model
-
-
 class MLModel:
     def select_model(self, model_name):
         if model_name == "logistic_regression":
             return LogisticRegression()
         elif model_name == "Bert":
             return BertModel()
-        elif model_name == "BertSent":
-            return BertSent()
 
 
 if __name__ == "__main__":
     models = MLModel()
-    model = models.select_model("BertSent")
+    model = models.select_model("Bert")
     bert_model = model.get_model()
     print(model.predict(["This is bad. Really bad"], bert_model))
         

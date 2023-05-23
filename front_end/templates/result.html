@@ -89,7 +89,7 @@
                     </div>
                     <div class="chart">
                         <h2>Word Cloud Topic 1</h2>
-                        <div id="wordcloud"></div>
+                        <div id="wordcloud1"></div>
                     </div>
                 </div>
                 <div class="column">
@@ -453,11 +453,11 @@ d3.layout.cloud().size([500, 500])
   .rotate(function() { return ~~(Math.random() * 2) * 90; })
   .font("Impact")
   .fontSize(function(d) { return d.size; })
-  .on("end", draw)
+  .on("end", draw1)
   .start();
 
-function draw(words) {
-  d3.select("#wordcloud").append("svg")
+function draw1(words) {
+  d3.select("#wordcloud1").append("svg")
     .attr("width", 500)
     .attr("height", 500)
     .append("g")
@@ -487,10 +487,10 @@ d3.layout.cloud().size([500, 500])
   .rotate(function() { return ~~(Math.random() * 2) * 90; })
   .font("Impact")
   .fontSize(function(d) { return d.size; })
-  .on("end", draw)
+  .on("end", draw2)
   .start();
 
-function draw(words) {
+function draw2(words) {
   d3.select("#wordcloud2").append("svg")
     .attr("width", 500)
     .attr("height", 500)

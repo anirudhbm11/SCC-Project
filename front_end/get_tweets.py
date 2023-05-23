@@ -17,14 +17,15 @@ class TwitterAPI:
             raise NotImplementedError
 
 class GetTweets():
-    def get_twitter_tweets(self, query, language="en",numpages=5):
+    def get_twitter_tweets(self, topic1, topic2, language="en",numpages=2):
         auth = Authentication()
         bearer_token = auth.authentication_type("bearer")
         next_page = 0
         tweets = []
         i = numpages
 
-        query_params = {'query':query + " lang:en -is:retweet",'tweet.fields':"created_at,lang,entities"}
+        query_params = {'query':topic1 + " lang:en -is:retweet" + " -" + topic2 + " -" + topic2[1:],'tweet.fields':"created_at,lang,entities"}
+        print(query_params)
 
         while i != 0:
             if i == numpages:
@@ -65,6 +66,9 @@ class Prediction:
         return (text_prediction, prediction_and_score)
 
     def get_predictions(self, tweets, model, bert_model):
+        '''
+        Getting hashtags and sentiment scores for all tweets
+        '''
         predictions = {}
         predictions["text_predictions"] = []
         all_hashtags = dict()
@@ -74,8 +78,6 @@ class Prediction:
         count = 0
         tweets_created_date = {}
         for tweet in tweets:
-            # if count == 1:
-            #     break
             date = tweet["created_at"].split("T")[0]
             if date in tweets_created_date:
                 tweets_created_date[date] += 1
@@ -85,7 +87,7 @@ class Prediction:
                 if "hashtags" in tweet["entities"].keys():
                     hashtags = tweet["entities"]["hashtags"]
                     for hashtag in hashtags:
-                        tag = hashtag["tag"]
+                        tag = hashtag["tag"].lower()
                         if tag in all_hashtags:
                             all_hashtags[tag] += 1
                         else:
@@ -97,10 +99,12 @@ class Prediction:
                 negativeTweets += 1
             else:
                 neutralTweets += 1
-            predictions["text_predictions"].append({"text": tweet["text"], "prediction":text_prediction[0]})
+            if count <= 50:
+                predictions["text_predictions"].append({"text": tweet["text"], "prediction":text_prediction[0]})
             count += 1
 
-        sorted_hashtags = dict(sorted(all_hashtags.items(), key=lambda x: x[1], reverse=True))
+        sorted_hashtags = dict(sorted(all_hashtags.items(), key=lambda x: x[1], reverse=True)[:50])
+
         sorted_tweets_created_date = dict(sorted(tweets_created_date.items(), key=lambda x: x[0]))
 
         predictions["aggregate"] = {}
@@ -116,7 +120,7 @@ class Prediction:
 if __name__ == "__main__":
     twitter_api = TwitterAPI()
     get_tweets = twitter_api.functionality("get_tweets")
-    tweets = get_tweets.get_twitter_tweets("banai")
+    tweets = get_tweets.get_twitter_tweets("#biden", "#trump")
     # tweets = ["One of them and testing it"]
 
     models = MLModel()

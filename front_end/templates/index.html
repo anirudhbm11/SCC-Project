@@ -29,9 +29,25 @@
           height: 100%;
           z-index: -1;
         }
+        .suggested {
+            text-align: center;
+            background: linear-gradient(to right, #ff00cc, #3333ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: Arial, sans-serif;
+        }
       </style>
 </head>
 <body>
+    <div class="suggested">
+        <h1>Suggested topics are</h1>
+        <div>
+          Biden v/s Trump<br>
+          ClimateAction v/s ClimateHoax<br>
+          Ronaldo v/s Messi<br>
+          ChatGPT v/s Bard<br>
+        </div>
+      </div>
 <canvas id="canvas"></canvas>
 <div id="app" class="container">
     <section class="left-section">
@@ -54,9 +70,6 @@
                 <button id="submit" type="submit" value="submit">Submit</button>
             </form>
         </div>
-    </section>
-    <section class="right-section">
-        <!-- Content of the right section goes here -->
     </section>
 </div>
 
